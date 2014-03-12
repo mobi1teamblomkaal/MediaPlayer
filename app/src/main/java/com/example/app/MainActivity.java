@@ -16,11 +16,11 @@ import android.widget.Button;
 import android.widget.SeekBar;
 
 public class MainActivity extends ActionBarActivity {
- Button playb;
-   Button pauseb;
+    Button playb;
+    Button pauseb;
     Button stopb;
     SeekBar sb;
-MediaPlayer mp;
+    MediaPlayer mp;
     Thread t;
     Runnable r;
 
@@ -33,56 +33,61 @@ MediaPlayer mp;
         stopb = (Button) findViewById(R.id.stopb);
         sb = (SeekBar) findViewById(R.id.sb);
 
-   playb.setOnClickListener(new View.OnClickListener() {
-       @Override
-       public void onClick(View view) {
-if(mp==null){
-    mp = MediaPlayer.create(getBaseContext(), Uri.parse("http://gototen.dk/wp-content/uploads/2013/12/dont-mess-with-my-man.mp3"));
-    mp.start();
-}
-       }
-   });
-    pauseb.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-if(!mp.isPlaying()){
-    mp.start();
+        playb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mp==null){
+                    mp = MediaPlayer.create(getBaseContext(), Uri.parse("http://gototen.dk/wp-content/uploads/2013/12/dont-mess-with-my-man.mp3"));
 
-}
-            else
-{
-    mp.pause();
+                }
+                mp.start();
+            }
+        });
+        pauseb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mp==null){return;}
+                if(!mp.isPlaying()){
+                    mp.start();
 
-}
-        }
-    });
- stopb.setOnClickListener(new View.OnClickListener() {
-     @Override
-     public void onClick(View view) {
-         if(mp.isPlaying())
-         {
-             mp.stop();
-         }
+                }
+                else
+                {
+                    mp.pause();
 
-     }
- });
+                }
+            }
+        });
+        stopb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mp==null){return;}
+                if(mp.isPlaying())
+                {
+                    mp.stop();
+                }
+                
+            }
+        });
 
-sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if(b){
+                    mp.seekTo(i);
+                }
+            }
 
-    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-    }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
-    }
-});
+            }
+        });
 
 
 
@@ -92,7 +97,7 @@ sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -110,20 +115,7 @@ sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
 
-        public PlaceholderFragment() {
-        }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }
 
 }
