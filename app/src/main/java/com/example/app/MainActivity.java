@@ -33,12 +33,14 @@ public class MainActivity extends ActionBarActivity {
         stopb = (Button) findViewById(R.id.stopb);
         sb = (SeekBar) findViewById(R.id.sb);
 
+
+
         playb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mp==null){
                     mp = MediaPlayer.create(getBaseContext(), Uri.parse("http://gototen.dk/wp-content/uploads/2013/12/dont-mess-with-my-man.mp3"));
-
+                    sb.setMax(mp.getDuration());
                 }
                 mp.start();
             }
@@ -64,7 +66,8 @@ public class MainActivity extends ActionBarActivity {
                 if(mp==null){return;}
                 if(mp.isPlaying())
                 {
-                    mp.stop();
+                    mp.pause();
+                    mp.seekTo(0);
                 }
                 
             }
