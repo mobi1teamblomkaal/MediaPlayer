@@ -33,13 +33,11 @@ public class MainActivity extends ActionBarActivity {
         stopb = (Button) findViewById(R.id.stopb);
         sb = (SeekBar) findViewById(R.id.sb);
 
+        // Runnable responsible for updating the UI with playing progress.
         r = new Runnable() {
             @Override
             public void run() {
                 while (true) {
-                    if (!mp.isPlaying()) {
-                        mp.seekTo(0);
-                    }
                     sb.setProgress(mp.getCurrentPosition());
                     try {
                         Thread.sleep(250);
@@ -55,6 +53,12 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View view) {
                 if (mp == null) {
                     mp = MediaPlayer.create(getBaseContext(), Uri.parse("http://gototen.dk/wp-content/uploads/2013/12/dont-mess-with-my-man.mp3"));
+                    mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            mp.seekTo(0);
+                        }
+                    });
                     sb.setMax(mp.getDuration());
                     Thread t = new Thread(r);
                     t.start();
