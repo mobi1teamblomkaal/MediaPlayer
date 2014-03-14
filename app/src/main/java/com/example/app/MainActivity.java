@@ -88,8 +88,8 @@ public class MainActivity extends ActionBarActivity {
                 }
                 if (mp.isPlaying()) {
                     mp.pause();
-                    mp.seekTo(0);
                 }
+                mp.seekTo(0);
             }
         });
 
