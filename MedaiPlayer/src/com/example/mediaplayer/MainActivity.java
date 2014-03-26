@@ -1,15 +1,15 @@
 package com.example.mediaplayer;
 
+import android.app.Activity;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 	Button playb;
 	Button pauseb;
 	Button stopb;
