@@ -15,14 +15,20 @@ import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.content.Intent;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
-    Button playb;
-    Button pauseb;
-    Button stopb;
-    SeekBar sb;
-    MediaPlayer mp;
-    Runnable r;
+
+    public static String path;
+    public static final boolean DEBUG = true;
+    private Button playb;
+    private Button pauseb;
+    private Button stopb;
+    private Button browseb;
+    private SeekBar sb;
+    private MediaPlayer mp;
+    private Runnable r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,7 @@ public class MainActivity extends ActionBarActivity {
         playb = (Button) findViewById(R.id.playb);
         pauseb = (Button) findViewById(R.id.pauseb);
         stopb = (Button) findViewById(R.id.stopb);
+        browseb = (Button) findViewById(R.id.browseb);
         sb = (SeekBar) findViewById(R.id.sb);
 
         // Runnable responsible for updating the UI with playing progress.
@@ -38,8 +45,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run() {
                 while (true) {
-                    sb.setProgress(mp.getCurrentPosition());
                     try {
+                        sb.setProgress((mp == null) ?  0 : mp.getCurrentPosition());
                         Thread.sleep(250);
                     } catch (InterruptedException e) {
                         Log.e("MedaiPlayerThread", "ProgressFAIL", e);
@@ -47,21 +54,14 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         };
+        Thread t = new Thread(r);
+        //t.start();
 
         playb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mp == null) {
-                    mp = MediaPlayer.create(getBaseContext(), Uri.parse("http://gototen.dk/wp-content/uploads/2013/12/dont-mess-with-my-man.mp3"));
-                    mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.seekTo(0);
-                        }
-                    });
-                    sb.setMax(mp.getDuration());
-                    Thread t = new Thread(r);
-                    t.start();
+                    return;
                 }
                 mp.start();
             }
@@ -93,10 +93,19 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        browseb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), FileBrowserActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(i);
+            }
+        });
+
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (b) {
+                if (b && mp != null) {
                     mp.seekTo(i);
                 }
             }
@@ -111,5 +120,36 @@ public class MainActivity extends ActionBarActivity {
                 //Should do nothing
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        try {
+            //Bundle extras = getIntent().getExtras();
+            //String path = extras.getString("path");
+            if (mp == null) {
+                mp = MediaPlayer.create(getBaseContext(), Uri.parse(path));
+            } else {
+                mp.reset();
+                mp.setDataSource(getBaseContext(), Uri.parse(path));
+            }
+
+            mp.start();
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.seekTo(0);
+                }
+            });
+            sb.setProgress(0);
+            sb.setMax(mp.getDuration());
+
+        } catch (Exception e) {
+            if (DEBUG) {
+                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

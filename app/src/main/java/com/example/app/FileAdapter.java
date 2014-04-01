@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 /**
  * Created by sandbeck on 3/26/14.
@@ -34,10 +35,19 @@ public class FileAdapter extends ArrayAdapter<File> {
         /*
          * image resources
          * folder: ic_menu_archive
-         * media file: ic_menu_play_clip
+         * media file: ic_media_video_poster
          * other:
          */
-        image.setImageDrawable(view.getResources().getDrawable(android.R.drawable.ic_menu_info_details));
+        if (data[position].isDirectory()) {
+            image.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_menu_archive));
+            description.setText("directory");
+        } else if (FileType.isMediaFile(data[position])){
+            image.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_media_video_poster));
+            description.setText("media file");
+        } else {
+            image.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_menu_paste_holo_dark));
+            description.setText("file");
+        }
         name.setText(data[position].getName());
 
         return view;
